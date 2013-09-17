@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,13 +19,13 @@ import java.util.logging.Logger;
  * @author Andrew
  */
 public class EccoServer{
-    static boolean autoFlush = true;
-    static boolean turnonserver= true;
+
    
+    List<Client> clientlist= new ArrayList();
     
-    public static void main(String[] args) {
-  
-                try {
+    public static void main(String[] args) {           
+         EccoServer ec = new EccoServer();
+          try {
             ServerSocket serverSocket = new ServerSocket(8888);
             /*Important: Blocking call, get around these blocking calls by using threads*/
             System.out.println("Waiting for client");
@@ -34,22 +36,27 @@ public class EccoServer{
             Logger.getLogger(EccoServer.class.getName()).log(Level.SEVERE, null, ex);
         
      
-            }    
+            }       
          
         
-    
+  
     }
     
-   
-    
-    public static void setAutoFlushFalse(){
-        autoFlush=false;
+     public void addClientToList(String clientname,String clientip,int clientport){
+       clientlist.add(new Client(clientname,clientip,clientport));
     }
     
-    public static void setAutoFlushTrue(){
-        autoFlush=true;
-    }
+     public String getClientName(int index){
+         return clientlist.get(index).getClientname();
+     }
+     
     
+    public String getClientIP(int index){
+        return clientlist.get(index).getClientip();
+    }
+     public int getClientPort(int index){
+        return clientlist.get(index).getClientport();
+    }
  
     
 }
