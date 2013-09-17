@@ -7,9 +7,12 @@ package server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static server.EccoServer.clientlist;
 
 
 /**
@@ -17,19 +20,20 @@ import java.util.logging.Logger;
  * @author Andrew
  */
 public class ClientHandler extends Thread{
-    
+    EccoServer serv;
     Scanner input;
     PrintWriter output;
-    
-    
+   
+//    clientlist= new ArrayList();
     
      public void handleClient(Socket socket){
      
         try {
             input = new Scanner(socket.getInputStream());
-            output= new PrintWriter(socket.getOutputStream(),true);            
+            output= new PrintWriter(socket.getOutputStream(),true);
+            serv.clientlist.add(new ClientFactory("",""+socket.getInetAddress(), socket.getPort()));
             start();
-        
+            System.out.println(""+clientlist.toString());
         } catch (IOException ex) {
             Logger.getLogger(EccoServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -48,6 +52,7 @@ public class ClientHandler extends Thread{
             System.out.println(message);
             output.println(message);
              message = input.nextLine();
+             
         }
         
         output.println(message);
@@ -55,7 +60,7 @@ public class ClientHandler extends Thread{
         output.close();
     }
    
-    
+   
   
     
 }

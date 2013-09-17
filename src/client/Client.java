@@ -13,23 +13,23 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author Andrew v1.
+ * @author Andrew
  */
-public class EccoClient extends Thread{
-   
+public class Client extends Thread{
+    
     Scanner input;
-    PrintWriter output;
+    PrintWriter output,outputName;
     List<MessageArrivedListener> listeners = new ArrayList();
-    public void connect(String ip, int port) throws UnknownHostException, IOException{
+    
+    
+    public void connect(String name,String ip, int port) throws UnknownHostException, IOException{
         Socket socket = new Socket(ip,port);
+        
         input = new Scanner(socket.getInputStream());
         output = new PrintWriter(socket.getOutputStream(),true);
-        
         start();
         System.out.println("Started Listning");
     }
@@ -69,28 +69,6 @@ public class EccoClient extends Thread{
         listeners.remove(mal);
     }
     
-    public static void main(String[] args){
-        try {
-          Client client = new Client();
-          Client client1 = new Client();
-             
-          client.connect("bob","localhost", 8888);          
-          client1.connect("bob2","localhost", 8888);
-         
-          
-               
-          
-          
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(EccoClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(EccoClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-  
-    public void messageArrived(MessageArrivedEvent evt) {
-        System.out.println(evt.getMessage());
-    }
     
+  
 }

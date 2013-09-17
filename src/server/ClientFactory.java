@@ -8,16 +8,16 @@ package server;
  *
  * @author Andrew
  */
-public class Client {
+public class ClientFactory {
     private String clientname;
     private String clientip;
     private int clientport;
     
-    public Client(){
+    public ClientFactory(){
         
     }
     
-    public Client(String clientname,String clientip,int clientport){
+    public ClientFactory(String clientname,String clientip,int clientport){
         this.clientname= clientname;
         this.clientip = clientip;
         this.clientport = clientport;
