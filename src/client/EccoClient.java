@@ -22,75 +22,23 @@ import java.util.logging.Logger;
  */
 public class EccoClient extends Thread{
    
-    Scanner input;
-    PrintWriter output;
-    List<MessageArrivedListener> listeners = new ArrayList();
-    public void connect(String ip, int port) throws UnknownHostException, IOException{
-        Socket socket = new Socket(ip,port);
-        input = new Scanner(socket.getInputStream());
-        output = new PrintWriter(socket.getOutputStream(),true);
-        
-        start();
-        System.out.println("Started Listning");
-    }
-    
-    public void disconnect(){
-        output.println("close");
-        //We will come back to this.
-        
-    }
-    public void sendMessage(String message){
-        output.println(message);
-    }
-    
-    public void run(){
-      String message = input.nextLine();
-      while(!message.equals("closed")){
-          System.out.println("Recived a message: " + message);
-          notifyObservers(message);
-          message = input.nextLine();
-      }
-      input.close();
-      output.close();
-      
-    }
-    
-   private void notifyObservers(String message){
-       MessageArrivedEvent evt = new MessageArrivedEvent(this,message);
-       for(MessageArrivedListener listener:listeners){
-           listener.messageArrived(evt);
-       }
-   }
-    public void addMessageArrivedListener(MessageArrivedListener mal){
-        listeners.add(mal);
-    }
-    
-    public void removeMessageArrivedListener(MessageArrivedListener mal){
-        listeners.remove(mal);
-    }
-    
+   
     public static void main(String[] args){
-        try {
-          Client client = new Client();
-          Client client1 = new Client();
+       
+          ClientController client = new ClientController();
+          ClientController client1 = new ClientController();
              
-          client.connect("bob","localhost", 8888);          
-          client1.connect("bob2","localhost", 8888);
-         
-          
+          client.connectToServer("Bob","localhost", 8888);          
+          client1.connectToServer("Bill","localhost", 8888);
+          client.sendMessageTo("Bill","BOB Say hi");
+          client1.sendMessageAll("BOB2 Says hi");
+//          client.disconnect();
+//          client1.disconnect();
                
-          
-          
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(EccoClient.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(EccoClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
 
   
-    public void messageArrived(MessageArrivedEvent evt) {
-        System.out.println(evt.getMessage());
-    }
+   
     
 }

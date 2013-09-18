@@ -25,7 +25,7 @@ public class Client extends Thread{
     List<MessageArrivedListener> listeners = new ArrayList();
     
     
-    public void connect(String name,String ip, int port) throws UnknownHostException, IOException{
+    public void connect(String ip, int port) throws UnknownHostException, IOException{
         Socket socket = new Socket(ip,port);
         
         input = new Scanner(socket.getInputStream());
@@ -34,11 +34,11 @@ public class Client extends Thread{
         System.out.println("Started Listning");
     }
     
-    public void disconnect(){
-        output.println("close");
-        //We will come back to this.
-        
-    }
+//    public void disconnect(){
+//        output.println("CLOSE");
+//        //We will come back to this.
+//        
+//    }
     public void sendMessage(String message){
         output.println(message);
     }
@@ -46,7 +46,7 @@ public class Client extends Thread{
     public void run(){
       String message = input.nextLine();
       while(!message.equals("closed")){
-          System.out.println("Recived a message: " + message);
+          System.out.println("Recived a message: ");
           notifyObservers(message);
           message = input.nextLine();
       }

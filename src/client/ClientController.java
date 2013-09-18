@@ -7,7 +7,12 @@ package client;
 import interfaces.MessageArrivedEvent;
 import interfaces.MessageArrivedListener;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,7 +20,7 @@ import java.util.logging.Logger;
  *
  * @author Andrew
  */
-public class ClientController {
+public class ClientController extends Thread{
     Client client;
     
     
@@ -23,7 +28,8 @@ public class ClientController {
          try {
          client = new Client();
              
-          client.connect(name,ip, port);
+          client.connect(ip, port);
+          client.sendMessage("CONNECT#"+name);
           client.addMessageArrivedListener(new MessageArrivedListener() {
 
               @Override
@@ -40,9 +46,17 @@ public class ClientController {
         }
     }
     
-    public void disconnectFromServer(){
-         client.disconnect();
-    }
     
+   public void sendMessageAll(String message){
+       client.sendMessage("SEND#"+"*"+message);
+   }
    
+   public void sendMessageTo(String message,String reciver){
+       client.sendMessage("SEND#"+message+"#"+reciver);
+   }
+    
+   public void disconnect(){
+      client.sendMessage("CLOSE#"+"Connection Clossed");
+   }
+    
 }

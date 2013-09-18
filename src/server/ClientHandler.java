@@ -6,13 +6,12 @@ package server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static server.EccoServer.clientlist;
+
 
 
 /**
@@ -23,44 +22,94 @@ public class ClientHandler extends Thread{
     EccoServer serv;
     Scanner input;
     PrintWriter output;
-   
+    Socket socket;
+   private String name;
+   private String message;
+   public static boolean connected;
 //    clientlist= new ArrayList();
+    /*Need to have evt listeners for sending commands to the server. This needs a fuck ton of logic to handle all the incoming commands and what to do with them.*/
     
-     public void handleClient(Socket socket){
-     
+   public void handleClient(Socket socket, EccoServer server){
         try {
-            input = new Scanner(socket.getInputStream());
-            output= new PrintWriter(socket.getOutputStream(),true);
-            serv.clientlist.add(new ClientFactory("",""+socket.getInetAddress(), socket.getPort()));
-            start();
-            System.out.println(""+clientlist.toString());
+            this.socket= socket;
+            this.serv=server;
+              connected=true;
+              input = new Scanner(socket.getInputStream());
+               output = new PrintWriter(socket.getOutputStream(),true);
+               
+                   start();
         } catch (IOException ex) {
-            Logger.getLogger(EccoServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-    }
+     }
 
     @Override
     public void run() {
         //important: Blocking call
-        String message = input.nextLine();
-        while(!message.equals("close")){
-            message = message.toUpperCase();
+       String message1 = input.nextLine();
+    while(connected){
+        
             //replace these souts with logger writes. 
             System.out.println("Got a message from the client");
-            System.out.println(message);
-            output.println(message);
-             message = input.nextLine();
-             
+            messageIn(message1);
+            message1 = input.nextLine();
         }
         
-        output.println(message);
+        
         input.close();
         output.close();
     }
-   
-   
-  
     
-}
+    public void sendMessage(String message){
+        output.println(message);
+    }
+    
+  
+        
+    public void messageIn(String message){
+        String [] messageSplit;
+        String temp = "None";
+        String tempMessage="None";
+            System.out.println("Message before split"+message);
+              messageSplit = message.split("#");
+              temp = messageSplit[0];
+              tempMessage=messageSplit[1];
+                   System.out.println("Split 0: ------>"+temp);
+                   System.out.println("Split 1:  ------>"+tempMessage);
+               
+        switch(temp)
+        {
+            case "CONNECT":
+                this.name=tempMessage;
+                serv.addToList(name, this);
+                sendMessage(name);
+                break;
+            case "SEND":
+                if(tempMessage.contains("*")){
+                    tempMessage.substring(0,1);                     
+                serv.messageAll(tempMessage,name);
+                }else{
+                   while(tempMessage.contains("#")){
+                    String [] messageSplit2;
+                        messageSplit2 =tempMessage.split("#");
+                        String nameOfReciver = messageSplit2[0];
+                        String messageToReciver = messageSplit2[1];
+                        serv.sendMessageTo(nameOfReciver, messageToReciver, name);
+                   }
+                }
+                break;
+            case "CLOSE":
+                serv.removeFromList(name, this);
+                sendMessage("closed");
+                connected=false;
+                break;
+                
+            }
+        }
+    }
+   
+   
+    
+    
+    
+
