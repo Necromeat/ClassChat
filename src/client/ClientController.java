@@ -51,8 +51,8 @@ public class ClientController extends Thread{
        client.sendMessage("SEND#"+"*"+message);
    }
    
-   public void sendMessageTo(String message,String reciver){
-       client.sendMessage("SEND#"+message+"#"+reciver);
+   public void sendMessageTo(String reciver,String message){
+       client.sendMessage("SEND#"+reciver+"MESSAGE#"+message);
    }
     
    public void disconnect(){

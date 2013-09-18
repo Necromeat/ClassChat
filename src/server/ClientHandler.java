@@ -70,12 +70,27 @@ public class ClientHandler extends Thread{
         String [] messageSplit;
         String temp = "None";
         String tempMessage="None";
-            System.out.println("Message before split"+message);
+        String tempMessage2="None";
+       
+        System.out.println("Message before split"+message);
+            
               messageSplit = message.split("#");
               temp = messageSplit[0];
               tempMessage=messageSplit[1];
                    System.out.println("Split 0: ------>"+temp);
                    System.out.println("Split 1:  ------>"+tempMessage);
+           System.out.println("Size of MergeSplit:" + messageSplit.length);
+                   /*Need to split the stream here.
+                    else{
+                   while(tempMessage.contains("#")){
+                    String [] messageSplit2;
+                        messageSplit2 =tempMessage.split("#");
+                        String nameOfReciver = messageSplit2[0];
+                        String messageToReciver = messageSplit2[1];
+                        serv.sendMessageTo(nameOfReciver, messageToReciver, name);
+                   }
+                    * 
+                    */
                
         switch(temp)
         {
@@ -86,17 +101,12 @@ public class ClientHandler extends Thread{
                 break;
             case "SEND":
                 if(tempMessage.contains("*")){
-                    tempMessage.substring(0,1);                     
-                serv.messageAll(tempMessage,name);
-                }else{
-                   while(tempMessage.contains("#")){
-                    String [] messageSplit2;
-                        messageSplit2 =tempMessage.split("#");
-                        String nameOfReciver = messageSplit2[0];
-                        String messageToReciver = messageSplit2[1];
-                        serv.sendMessageTo(nameOfReciver, messageToReciver, name);
-                   }
+                    String temo=tempMessage.substring(1,tempMessage.length());                     
+                serv.messageAll(temo,name);
                 }
+                break;
+            case "MESSAGE":
+                serv.sendMessageTo(tempMessage, tempMessage2, name);
                 break;
             case "CLOSE":
                 serv.removeFromList(name, this);
