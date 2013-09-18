@@ -24,7 +24,6 @@ public class ClientHandler extends Thread{
     PrintWriter output;
     Socket socket;
    private String name;
-   private String message;
    public static boolean connected;
 //    clientlist= new ArrayList();
     /*Need to have evt listeners for sending commands to the server. This needs a fuck ton of logic to handle all the incoming commands and what to do with them.*/
@@ -72,14 +71,6 @@ public class ClientHandler extends Thread{
         String tempMessage="None";
         String tempMessage2="None";
        
-        System.out.println("Message before split"+message);
-            
-              messageSplit = message.split("#");
-              temp = messageSplit[0];
-              tempMessage=messageSplit[1];
-                   System.out.println("Split 0: ------>"+temp);
-                   System.out.println("Split 1:  ------>"+tempMessage);
-           System.out.println("Size of MergeSplit:" + messageSplit.length);
                    /*Need to split the stream here.
                     else{
                    while(tempMessage.contains("#")){
@@ -92,7 +83,7 @@ public class ClientHandler extends Thread{
                     * 
                     */
                
-        switch(temp)
+        switch(message)
         {
             case "CONNECT":
                 this.name=tempMessage;
@@ -100,9 +91,17 @@ public class ClientHandler extends Thread{
                 sendMessage(name);
                 break;
             case "SEND":
-                if(tempMessage.contains("*")){
+                if(temp.contains("*")){
                     String temo=tempMessage.substring(1,tempMessage.length());                     
                 serv.messageAll(temo,name);
+                }else{
+                
+                   messageSplit = message.split("#");
+              temp = messageSplit[0];
+              tempMessage=messageSplit[1];
+                   System.out.println("Split 0: ------>"+temp);
+                   System.out.println("Split 1:  ------>"+tempMessage);
+                
                 }
                 break;
             case "MESSAGE":
